@@ -33,20 +33,11 @@ variable "image_uri" {
 }
 
 # ---------------------------------------------------------------------------
-# ECR Repository
+# ECR Repository  (looked up — created by the Build job before Terraform runs)
 # ---------------------------------------------------------------------------
 
-resource "aws_ecr_repository" "app" {
-  name         = var.project_name
-  force_delete = true
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  tags = {
-    Project = var.project_name
-  }
+data "aws_ecr_repository" "app" {
+  name = var.project_name
 }
 
 # ---------------------------------------------------------------------------
@@ -412,5 +403,5 @@ output "app_url" {
 
 output "ecr_repository_url" {
   description = "ECR repository URL"
-  value       = aws_ecr_repository.app.repository_url
+  value       = data.aws_ecr_repository.app.repository_url
 }
